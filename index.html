@@ -13,41 +13,61 @@
 tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'#0f1923',card:'#182538',border:'#2a3f5f',muted:'#7a8ba5',light:'#e8ecf1',success:'#22c55e',danger:'#ef4444',paj:'#ef4444'},fontFamily:{display:['Playfair Display','serif'],body:['Source Sans 3','sans-serif']}}}}
 </script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min-height:100vh;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min-height:100vh;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+
 .input-field{background:#0f1923;border:1.5px solid #2a3f5f;color:#e8ecf1;padding:14px 16px;border-radius:10px;width:100%;font-size:17px;transition:border-color .2s}
 .input-field:focus{outline:none;border-color:#c9a84c}
 .btn-primary{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;font-weight:700;padding:14px 28px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;font-size:16px;width:100%}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,.3)}
 .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+
 .exam-shell{display:flex;flex-direction:column;height:100vh}
 .exam-hdr{background:linear-gradient(135deg,#1a2744 0%,#1e2d4a 100%);border-bottom:1px solid #2a3f5f;padding:8px 16px}
-.prog-track{height:3px;background:#1a2744;flex-shrink:0}.prog-fill{height:100%;background:linear-gradient(90deg,#ef4444,#f59e0b);transition:width .3s}
-.nav-rail{display:flex;gap:5px;overflow-x:auto;padding:8px;flex-shrink:0}
-.nav-dot{width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#182538;border:1px solid #2a3f5f;color:#7a8ba5;cursor:pointer;font-weight:700;font-size:11px}
-.nav-dot.now{background:#ef4444;color:#fff;border-color:#ef4444}
-.nav-dot.done{border-color:#22c55e;color:#22c55e}
-.exam-body{flex:1;overflow-y:auto;padding:16px 16px 80px 16px}
-.q-card{background:#182538;border:1px solid #2a3f5f;border-radius:14px;padding:20px;max-width:600px;margin:0 auto}
-.q-num{width:32px;height:32px;border-radius:8px;background:#ef4444;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.opt-row{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #2a3f5f;border-radius:10px;cursor:pointer;margin-bottom:8px;background:rgba(15,25,35,.5);transition:all 0.2s}
-.opt-row:hover{border-color:#475569}
+.prog-track{height:3px;background:#1a2744;flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,#ef4444,#f59e0b);transition:width .3s}
+
+.nav-rail{display:flex;gap:5px;overflow-x:auto;padding:10px 12px;flex-shrink:0;background:#131d2c;scrollbar-width:none}
+.nav-rail::-webkit-scrollbar{display:none}
+.nav-dot{width:38px;height:38px;min-width:38px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#182538;border:1.5px solid #2a3f5f;color:#7a8ba5;cursor:pointer;font-weight:700;font-size:12px;transition:all .2s}
+.nav-dot.now{background:#ef4444;color:#fff;border-color:#ef4444;transform:scale(1.05)}
+.nav-dot.done{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.1)}
+
+.exam-body{flex:1;overflow-y:auto;padding:16px 16px 90px 16px;-webkit-overflow-scrolling:touch}
+.q-card{background:#182538;border:1px solid #2a3f5f;border-radius:14px;padding:20px;max-width:600px;margin:0 auto;box-shadow:0 4px 15px rgba(0,0,0,0.2)}
+.q-num{width:32px;height:32px;border-radius:8px;background:#ef4444;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+
+.opt-row{display:flex;align-items:flex-start;gap:12px;padding:14px 12px;border:1.5px solid #2a3f5f;border-radius:12px;cursor:pointer;margin-bottom:10px;background:rgba(15,25,35,.5);transition:all 0.2s}
+.opt-row:active{transform:scale(0.98)}
 .opt-row.picked{border-color:#ef4444;background:rgba(239,68,68,.1)}
-.opt-ltr{width:28px;height:28px;border-radius:7px;background:#182538;border:1px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a8ba5}
+.opt-ltr{width:30px;height:30px;min-width:30px;border-radius:8px;background:#182538;border:1px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a8ba5;font-size:13px}
 .opt-row.picked .opt-ltr{background:#ef4444;border-color:#ef4444;color:#fff}
-.essay-box{width:100%;min-height:150px;background:#0f1923;border:1.5px solid #2a3f5f;color:#e8ecf1;padding:12px;border-radius:10px;font-family:inherit;resize:vertical}
-.bot-nav{position:fixed;bottom:0;left:0;right:0;background:#182538;border-top:1px solid #2a3f5f;padding:10px;display:flex;justify-content:space-between;gap:8px}
-.b-nav-btn{padding:10px 20px;border-radius:8px;background:#1a2744;color:#e8ecf1;cursor:pointer;font-weight:600;font-size:14px;border:none}
+.opt-content{flex:1;word-break:break-word;min-width:0}
+
+.q-img{display:block;max-width:100%;max-height:200px;width:auto;height:auto;margin:12px auto 0;border-radius:8px;object-fit:contain;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.opt-img{display:block;max-width:100%;max-height:120px;width:auto;height:auto;margin-top:8px;border-radius:6px;object-fit:contain;background:#fff;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+
+.essay-box{width:100%;min-height:150px;background:#0f1923;border:1.5px solid #2a3f5f;color:#e8ecf1;padding:12px;border-radius:10px;font-family:inherit;font-size:16px;resize:vertical}
+
+.bot-nav{position:fixed;bottom:0;left:0;right:0;background:#182538;border-top:1px solid #2a3f5f;padding:10px 12px;display:flex;justify-content:space-between;gap:8px;z-index:10;box-shadow:0 -4px 15px rgba(0,0,0,0.3)}
+.b-nav-btn{padding:12px 16px;border-radius:10px;background:#1a2744;color:#e8ecf1;cursor:pointer;font-weight:600;font-size:14px;border:none;display:flex;align-items:center;justify-content:center;gap:6px;flex:1}
+.b-nav-btn:active{transform:scale(0.95)}
 .b-nav-btn.accent{background:#ef4444;color:#fff}
+.b-nav-btn.finish{background:#22c55e;color:#fff;flex:1.2}
+
 .res-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 .res-card{background:#182538;padding:30px;border-radius:20px;text-align:center;width:100%;max-width:400px;border:2px solid #2a3f5f}
-.res-score{font-size:3rem;font-weight:800;font-family:'Playfair Display',serif;color:#c9a84c}
+.res-score{font-size:3.5rem;font-weight:800;font-family:'Playfair Display',serif;color:#c9a84c}
 .warn-screen{position:fixed;inset:0;background:rgba(220,38,38,.98);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;text-align:center;padding:20px}
 .loading-overlay{position:fixed;inset:0;background:rgba(15,25,35,.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;color:white}
+.sync-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;text-align:center;padding:20px}
+
+.zoom-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;cursor:pointer}
+.zoom-overlay img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginView" class="min-h-screen flex items-center justify-center p-5" style="background:radial-gradient(ellipse at 50% 30%,#1a2744 0%,#0f1923 70%)">
     <div class="w-full max-w-sm text-center">
         <div class="mb-6">
@@ -58,12 +78,12 @@ tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'
         </div>
         <div class="space-y-4 text-left">
             <div>
-                <label class="text-xs text-muted font-semibold block mb-1">NISN Siswa</label>
-                <input type="text" id="inNisn" class="input-field" placeholder="Masukkan NISN" inputmode="numeric">
+                <label class="text-xs text-muted font-semibold block mb-1">NISN / Nomor Peserta</label>
+                <input type="text" id="inNisn" class="input-field" placeholder="Masukkan NISN atau No. Peserta" autocomplete="off">
             </div>
             <div>
                 <label class="text-xs text-muted font-semibold block mb-1">Token Ujian</label>
-                <input type="text" id="inToken" class="input-field font-mono uppercase tracking-widest text-center" placeholder="Masukkan 6 Karakter" maxlength="6">
+                <input type="text" id="inToken" class="input-field font-mono uppercase tracking-widest text-center" placeholder="Masukkan 6 Karakter" maxlength="6" autocomplete="off">
             </div>
             <button onclick="doLogin()" id="btnMasuk" class="btn-primary">MASUK UJIAN</button>
             <p id="loginError" class="text-danger text-xs text-center hidden"></p>
@@ -71,7 +91,6 @@ tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'
     </div>
 </div>
 
-<!-- UJIAN -->
 <div id="examView" class="hidden exam-shell">
     <div class="exam-hdr">
         <div class="flex-1">
@@ -91,13 +110,12 @@ tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'
     <div class="nav-rail" id="navRail"></div>
     <div class="exam-body" id="qArea"></div>
     <div class="bot-nav no-print">
-        <button onclick="goPrev()" id="bPrev" class="b-nav-btn"><i class="fas fa-chevron-left mr-1"></i> Kembali</button>
-        <button onclick="goNext()" id="bNext" class="b-nav-btn accent">Maju <i class="fas fa-chevron-right ml-1"></i></button>
-        <button onclick="confirmSubmit()" class="b-nav-btn" style="background:#22c55e;color:#fff"><i class="fas fa-paper-plane mr-1"></i> Selesai</button>
+        <button onclick="goPrev()" id="bPrev" class="b-nav-btn"><i class="fas fa-chevron-left"></i> Kembali</button>
+        <button onclick="goNext()" id="bNext" class="b-nav-btn accent">Maju <i class="fas fa-chevron-right"></i></button>
+        <button onclick="confirmSubmit()" class="b-nav-btn finish"><i class="fas fa-paper-plane"></i> Selesai</button>
     </div>
 </div>
 
-<!-- WARNING -->
 <div id="warnScreen" class="warn-screen">
     <i class="fas fa-exclamation-triangle text-5xl mb-4"></i>
     <h1 class="text-3xl font-bold mb-2">PERINGATAN!</h1>
@@ -106,7 +124,6 @@ tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'
     <button onclick="resumeExam()" class="bg-white text-red-700 font-bold py-3 px-8 rounded-full text-lg">KEMBALI UJIAN</button>
 </div>
 
-<!-- RESULT -->
 <div id="resView" class="res-overlay">
     <div class="res-card fade-in">
         <i class="fas fa-check-circle text-success text-4xl mb-3"></i>
@@ -117,21 +134,28 @@ tailwind.config={theme:{extend:{colors:{kop:'#1a2744',kopAccent:'#c9a84c',dark:'
             <div class="res-score" id="resScore">0</div>
         </div>
         <p class="text-muted text-xs mt-2 mb-6" id="resSub">Nilai PG Otomatis (Uraian menunggu koreksi Guru)</p>
-        <button onclick="location.reload()" class="btn-primary text-sm py-3">KEMBALI KE LOGIN</button>
+        <button onclick="exitApp()" class="btn-primary text-sm py-3">SELESAI</button>
     </div>
 </div>
 
-<!-- LOADING -->
 <div id="loadingScreen" class="loading-overlay">
     <i class="fas fa-spinner fa-spin text-4xl text-paj mb-4"></i>
-    <p class="text-lg font-semibold">Memuat Soal Ujian...</p>
+    <p class="text-lg font-semibold" id="loadingText">Memuat Soal Ujian...</p>
     <p class="text-sm text-muted mt-2 text-center px-8">Harap tunggu, jangan tutup atau refresh halaman ini.</p>
 </div>
 
+<div id="syncOverlay" class="sync-overlay">
+    <i class="fas fa-wifi text-4xl text-success mb-4"></i>
+    <p class="text-lg font-semibold mb-2">Koneksi Kembali Terdeteksi</p>
+    <p class="text-sm text-muted mb-6">Menyinkronkan jawaban Anda ke server...</p>
+    <i class="fas fa-spinner fa-spin text-2xl text-light"></i>
+</div>
+
+<div id="zoomOverlay" class="zoom-overlay" onclick="this.style.display='none'">
+    <img id="zoomImg" src="" alt="Zoom">
+</div>
+
 <script>
-// Konfigurasi Firebase Terintegrasi (DB SAT untuk Siswa/Token, DB PAJ untuk Soal)
-// --- FIX 1 & 2: KONFIGURASI FIREBASE YANG BENAR ---
-// Menghapus duplikasi dan variabel yang tidak terdefinisi
 var firebaseConfigSAT = {
   apiKey: "AIzaSyA_yMnibh_B2p1yQhX3iFTfHPKffuUFu1o",
   authDomain: "daaipalasah2026.firebaseapp.com",
@@ -139,9 +163,9 @@ var firebaseConfigSAT = {
   projectId: "daaipalasah2026",
   storageBucket: "daaipalasah2026.firebasestorage.app",
   messagingSenderId: "467837481509",
-  appId: "1:467837481509:web:29e8c85863acea032485cc",
-  measurementId: "G-2N1SMTFBXM"
+  appId: "1:467837481509:web:29e8c85863acea032485cc"
 };
+
 var firebaseConfigPAJ = {
   apiKey: "AIzaSyCWhoRJjoxCWv1YQVgkplmhrxtgitFc0K8",
   authDomain: "pajpalasah2026.firebaseapp.com",
@@ -149,8 +173,7 @@ var firebaseConfigPAJ = {
   projectId: "pajpalasah2026",
   storageBucket: "pajpalasah2026.firebasestorage.app",
   messagingSenderId: "422803459041",
-  appId: "1:422803459041:web:c01828251269b72fd8a0a0",
-  measurementId: "G-T9XEKSKCQS"
+  appId: "1:422803459041:web:c01828251269b72fd8a0a0"
 };
 
 var dbSAT, dbPAJ;
@@ -161,45 +184,107 @@ try {
     dbPAJ = appPAJ.firestore();
 } catch(e) { console.error("Firebase Init Error:", e); }
 
-var stu=null, exam=null, qList=[], ans={}, qIdx=0, timerInt=null, warnCnt=0, active=false;
+var stu=null, exam=null, qList=[], ans={}, qIdx=0, timerInt=null, warnCnt=0, active=false, examIdKey='PAJ_EXAM_DATA';
 var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matematika'},{id:'bin',nama:'Bahasa Indonesia'},{id:'sbd',nama:'Seni Budaya'},{id:'ipas',nama:'IPAS'},{id:'bsd',nama:'Bahasa Sunda'},{id:'bing',nama:'Bahasa Inggris'},{id:'pai',nama:'PAI'},{id:'pjok',nama:'PJOK'}];
+
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
 function esc(s){if(!s)return'';return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c]})}
+function showLoginError(msg){var el=document.getElementById('loginError');el.textContent=msg;el.classList.remove('hidden');var btn=document.getElementById('btnMasuk');btn.disabled=false;btn.innerHTML='MASUK UJIAN';}
 
-function showLoginError(msg){var el=document.getElementById('loginError');el.textContent=msg;el.classList.remove('hidden')}
+window.onload = function() {
+    document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, false);
+    document.addEventListener('copy', function(e){ e.preventDefault(); }, false);
+    document.addEventListener('cut', function(e){ e.preventDefault(); }, false);
+    document.addEventListener('paste', function(e){ e.preventDefault(); }, false);
+    document.addEventListener('selectstart', function(e){ if(active) e.preventDefault(); }, false);
+    document.addEventListener('keydown', function(e) {
+        if(e.keyCode === 123) e.preventDefault(); 
+        if(e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) e.preventDefault(); 
+        if(e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) e.preventDefault(); 
+        if(e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) e.preventDefault(); 
+    }, false);
+    checkResumedExam();
+};
+
+function setupSecurity(){
+    document.addEventListener('visibilitychange', function(){
+        if(active && document.hidden){
+            warnCnt++;
+            document.getElementById('warnScreen').style.display='flex';
+            document.getElementById('warnLeft').textContent = 3 - warnCnt;
+            if(warnCnt >= 3){ doSubmit(true); } 
+        }
+    });
+}
+
+function resumeExam(){document.getElementById('warnScreen').style.display='none'}
+
+function checkResumedExam(){
+    var savedExam = localStorage.getItem(examIdKey);
+    if(savedExam){
+        try {
+            var data = JSON.parse(savedExam);
+            stu = data.stu; exam = data.exam; qList = data.qList; ans = data.ans; qIdx = data.qIdx;
+            document.getElementById('loginView').style.display='none';
+            startExam(true); 
+        } catch(e) {
+            localStorage.removeItem(examIdKey);
+        }
+    }
+}
+
+function saveStateLocally(){
+    var state = { stu: stu, exam: exam, qList: qList, ans: ans, qIdx: qIdx };
+    localStorage.setItem(examIdKey, JSON.stringify(state));
+}
+
+function zoomImage(src){
+    document.getElementById('zoomImg').src = src;
+    document.getElementById('zoomOverlay').style.display = 'flex';
+}
 
 function doLogin(){
-    var n=document.getElementById('inNisn').value.trim(), t=document.getElementById('inToken').value.trim().toUpperCase();
+    var inputId = document.getElementById('inNisn').value.trim();
+    var t = document.getElementById('inToken').value.trim().toUpperCase();
     document.getElementById('loginError').classList.add('hidden');
-    if(!n||!t){showLoginError('NISN dan Token wajib diisi!');return}
+    
+    if(!inputId || !t){ showLoginError('NISN / No. Peserta dan Token wajib diisi!'); return; }
     
     var btn=document.getElementById('btnMasuk');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i> Cek Data...';
 
-    // 1. Cari Token di DB SAT
-    dbSAT.collection('exam_tokens').where('token','==',t).limit(1).get().then(function(ts){
-        if(ts.empty){showLoginError('Token Ujian tidak valid!');btn.disabled=false;btn.innerHTML='MASUK UJIAN';return}
-        exam=ts.docs[0].data();
+    dbSAT.collection('exam_tokens').where('token','==',t).limit(5).get().then(function(ts){
+        if(ts.empty){ showLoginError('Token Ujian tidak valid!'); return; }
         
-        // 2. Cari Siswa di DB SAT (Batch untuk menghindasi limitasi Firebase where)
-        var batch1 = dbSAT.collection('students').where('nisn','==',n).where('kelas','==','Kelas 6').limit(1).get();
-        var batch2 = dbSAT.collection('students_paj').where('nisn','==',n).where('kelas','==','Kelas 6').limit(1).get();
+        var validToken = null;
+        ts.forEach(function(doc){
+            var d = doc.data();
+            if(d.isActive === true){ validToken = d; validToken.id = doc.id; }
+        });
         
-        Promise.all([batch1, batch2]).then(function(results){
-            var sData=null, sId=null;
-            if(!results[0].empty){sData=results[0].docs[0].data();sId=results[0].docs[0].id}
-            if(!sData && !results[1].empty){sData=results[1].docs[0].data();sId=results[1].docs[0].id}
+        if(!validToken){ showLoginError('Token sudah nonaktif! Hubungi Guru.'); return; }
+        exam = validToken;
+        
+        dbSAT.collection('students').where('npsn','==',exam.npsn).limit(50).get().then(function(stSnap){
+            if(stSnap.empty){ showLoginError('Tidak ada data siswa untuk sekolah token ini!'); return; }
             
-            if(!sData){showLoginError('NISN tidak terdaftar sebagai siswa Kelas 6!');btn.disabled=false;btn.innerHTML='MASUK UJIAN';return}
-            stu=Object.assign({id:sId},sData);
+            var sData = null, sId = null;
+            stSnap.forEach(function(doc){
+                var d = doc.data();
+                if(d.nisn === inputId || d.pesertaUjian === inputId){
+                    sData = d; sId = doc.id;
+                }
+            });
             
-            // 3. Cek Duplikat Hasil di DB PAJ
-            dbPAJ.collection('exam_results').where('token','==',t).where('nisn','==',n).limit(1).get().then(function(rs){
-                if(!rs.empty){showLoginError('Kamu sudah mengerjakan ujian ini!');btn.disabled=false;btn.innerHTML='MASUK UJIAN';return}
+            if(!sData){ showLoginError('NISN / No. Peserta tidak ditemukan di sekolah ini!'); return; }
+            stu = Object.assign({id: sId}, sData);
+            
+            dbPAJ.collection('exam_results').where('token','==',t).where('nisn','==',stu.nisn).limit(1).get().then(function(rs){
+                if(!rs.empty){ showLoginError('Kamu sudah mengerjakan ujian ini sebelumnya!'); return; }
                 loadQuestions();
             });
         });
     }).catch(function(e){
-        showLoginError('Error jaringan: '+e.message);btn.disabled=false;btn.innerHTML='MASUK UJIAN';
+        showLoginError('Gagal login: '+e.message);
     });
 }
 
@@ -207,24 +292,22 @@ function loadQuestions(){
     document.getElementById('loginView').style.display='none';
     document.getElementById('loadingScreen').style.display='flex';
     
-    // Load dari DB PAJ
     dbPAJ.collection('questions_paj').where('mapel','==',exam.mapel).where('kecamatanId','==',exam.kecamatanId).get().then(function(s){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        // Acak urutan soal
-        list.sort(function(){return 0.5-Math.random()});
-        // PG di atas, Uraian di bawah
-        list.sort(function(a,b){return(a.type==='pg'?-1:1)});
+        list.sort(function(){return 0.5-Math.random()}); 
+        list.sort(function(a,b){return(a.type==='pg'?-1:1)}); 
         
-        qList=list;
-        startExam();
+        qList = list;
+        saveStateLocally(); 
+        startExam(false);
     }).catch(function(e){
         alert('Gagal memuat soal: '+e.message);location.reload();
     });
 }
 
-function startExam(){
+function startExam(isResume){
     document.getElementById('loadingScreen').style.display='none';
     document.getElementById('examView').classList.remove('hidden');
     
@@ -232,9 +315,21 @@ function startExam(){
     document.getElementById('sekolahTitle').textContent=stu.namaSekolah||'';
     
     buildNav(); 
-    startClock(exam.durasiMenit*60 || 3600); // Default 60 menit jika null
+    var durasiDetik = (exam.durasi || 60) * 60; 
+    
+    if(isResume) {
+        var elapsedSeconds = Math.floor((Date.now() - exam.startTime) / 1000);
+        var remainingSeconds = durasiDetik - elapsedSeconds;
+        if(remainingSeconds <= 0) { doSubmit(true); return; } 
+        startClock(remainingSeconds);
+    } else {
+        exam.startTime = Date.now(); 
+        saveStateLocally();
+        startClock(durasiDetik);
+    }
+    
     active=true; 
-    renderQ(0);
+    renderQ(qIdx);
     setupSecurity();
 }
 
@@ -255,30 +350,59 @@ function renderQ(idx){
     document.getElementById('nd-'+idx).classList.add('now');
     
     var area=document.getElementById('qArea');
-    var h='<div class="q-card fade-in"><div class="flex items-start gap-3 mb-4"><div class="q-num">'+(idx+1)+'</div><div class="flex-1"><p class="text-lg leading-relaxed font-medium">'+esc(q.text)+'</p>';
-    if(q.image) h+='<img src="'+q.image+'" class="mt-3 rounded max-w-full" alt="Gambar Soal">';
-    h+='</div></div>';
+    var h='<div class="q-card fade-in"><div class="flex items-start gap-3 mb-5"><div class="q-num">'+(idx+1)+'</div><div class="flex-1 text-[17px] leading-relaxed font-medium">'+esc(q.text)+'</div></div>';
+    
+    if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     
     if(q.type==='pg'){
-        h+='<div class="space-y-2 mt-2">';var L=['A','B','C','D'];
-        (q.options||[]).forEach(function(opt,oi){
-            if(!opt && opt !== '') return; // Skip opsi kosong
-            var sel=ans[q.id]===L[oi]?'picked':'';
-            h+='<div onclick="pickOpt(\''+q.id+'\',\''+L[oi]+'\')" class="opt-row '+sel+'"><div class="opt-ltr">'+L[oi]+'</div><div class="text-sm flex-1">'+esc(opt)+'</div>';
-            if(q.optionImages && q.optionImages[oi]) h+='<img src="'+q.optionImages[oi]+'" class="ml-2 max-h-12 rounded">';
-            h+='</div>';
-        });h+='</div>';
+        h+='<div class="space-y-0 mt-3">';
+        var L=['A','B','C','D'];
+        var opts = [];
+        var optImgs = [];
+        
+        if(q.options && Array.isArray(q.options) && q.options.length > 0){
+            opts = q.options;
+            optImgs = q.optionImages || [];
+        } else {
+            L.forEach(function(lt){
+                opts.push(q['opt'+lt] || '');
+                optImgs.push(q['optImg'+lt] || '');
+            });
+        }
+
+        opts.forEach(function(opt,oi){
+            var optImgUrl = optImgs && optImgs[oi] ? optImgs[oi] : '';
+            var optText = (opt === null || opt === undefined) ? '' : String(opt);
+            
+            // PERBAIKAN PENTING: Opsi tetap muncul meskipun teks kosong, selama ada URL gambar
+            if(optText !== '' || optImgUrl !== '') {
+                var sel=ans[q.id]===L[oi]?'picked':'';
+                h+='<div onclick="pickOpt(\''+q.id+'\',\''+L[oi]+'\')" class="opt-row '+sel+'">';
+                h+='<div class="opt-ltr">'+L[oi]+'</div>';
+                h+='<div class="opt-content">';
+                
+                if(optText !== '') {
+                    h+='<div class="text-[15px] leading-snug">'+esc(optText)+'</div>';
+                }
+                
+                if(optImgUrl !== '') {
+                    h+='<img src="'+optImgUrl+'" onclick="event.stopPropagation(); zoomImage(this.src)" class="opt-img '+(optText !== '' ? 'mt-2' : '')+'" alt="Opsi '+L[oi]+'">';
+                }
+                
+                h+='</div></div>';
+            }
+        });
+        h+='</div>';
     }else{
         var cv=ans[q.id]||'';
         h+='<textarea id="es-'+q.id+'" class="essay-box" placeholder="Tulis jawaban uraian di sini..." oninput="saveEs(\''+q.id+'\')">'+esc(cv)+'</textarea>';
     }
     h+='</div>';area.innerHTML=h;
-    updProg();
-    area.scrollTop = 0;
+    updProg(); area.scrollTop = 0;
 }
 
-function pickOpt(qId,val){ans[qId]=val;renderQ(qIdx)}
-function saveEs(qId){ans[qId]=document.getElementById('es-'+qId).value;updProg();document.getElementById('nd-'+qIdx).classList.add('done')}
+function pickOpt(qId,val){ans[qId]=val; saveStateLocally(); renderQ(qIdx)}
+function saveEs(qId){ans[qId]=document.getElementById('es-'+qId).value; saveStateLocally(); updProg(); document.getElementById('nd-'+qIdx).classList.add('done')}
 function updProg(){var a=0;qList.forEach(function(q){if(ans[q.id])a++});document.getElementById('progBar').style.width=(a/qList.length*100)+'%'}
 function goNext(){if(qIdx<qList.length-1)renderQ(qIdx+1)}
 function goPrev(){if(qIdx>0)renderQ(qIdx-1)}
@@ -287,24 +411,10 @@ function startClock(sec){
     var r=sec;var d=document.getElementById('tmVal');clearInterval(timerInt);
     timerInt=setInterval(function(){
         var m=Math.floor(r/60);var s=r%60;d.textContent=(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
-        if(r <= 300) d.style.color='#ef4444'; // Merah jika < 5 menit
+        if(r <= 300) d.style.color='#ef4444'; 
         if(--r<0){clearInterval(timerInt);doSubmit(true)}
     },1000);
 }
-
-function setupSecurity(){
-    document.addEventListener('visibilitychange',function(){
-        if(active&&document.hidden){
-            warnCnt++;
-            document.getElementById('warnScreen').style.display='flex';
-            document.getElementById('warnLeft').textContent = 3 - warnCnt;
-            if(warnCnt >= 3){ doSubmit(true); } // Auto submit jika 3x melanggar
-        }
-    });
-    // Disable right click
-    document.addEventListener('contextmenu', function(e){ if(active) e.preventDefault(); });
-}
-function resumeExam(){document.getElementById('warnScreen').style.display='none'}
 
 function confirmSubmit(){
     var u=0;qList.forEach(function(q){if(!ans[q.id])u++});
@@ -316,9 +426,7 @@ function confirmSubmit(){
 function doSubmit(forced){
     active=false;clearInterval(timerInt);
     
-    // Hitung Koreksi Otomatis (PG)
-    var totalPgScore=0, maxPgScore=0, pgCorrect=0;
-    var urCount=0;
+    var totalPgScore=0, maxPgScore=0, pgCorrect=0, urCount=0;
     
     qList.forEach(function(q){
         if(q.type==='pg'){
@@ -332,36 +440,70 @@ function doSubmit(forced){
         }
     });
     
-    // Konversi ke skala 100 untuk PG
     var nilaiPG = maxPgScore > 0 ? Math.round((totalPgScore/maxPgScore)*100) : 0;
-    var nilaiUraian = 0; // Default 0, menunggu koreksi guru
+    var nilaiUraian = 0; 
     var nilaiAkhir = urCount > 0 ? Math.round((nilaiPG*0.7) + (nilaiUraian*0.3)) : nilaiPG;
     
-    var rd={
+    var rd = {
         studentId:stu.id, userId:stu.id,
         namaSiswa:stu.nama, studentName:stu.nama, name:stu.nama,
         nisn:stu.nisn, studentNisn:stu.nisn,
-        kelas:stu.kelas, mapel:exam.mapel,
+        pesertaUjian: stu.pesertaUjian || stu.nisn,
+        kelas:stu.kelas||'Kelas 6', mapel:exam.mapel,
         isPAJ:true, token:exam.token,
         kecamatanId:exam.kecamatanId, npsn:exam.npsn, rombel:stu.rombel,
         answers:ans, 
         pgScore:nilaiPG, scorePG:nilaiPG, nilaiPG:nilaiPG, pgCorrect:pgCorrect,
         essayScore:nilaiUraian, uraianScore:nilaiUraian, scoreUraian:nilaiUraian, nilaiUraian:nilaiUraian,
         score:nilaiAkhir, finalScore:nilaiAkhir, nilaiAkhir:nilaiAkhir, totalScore:nilaiAkhir,
-        dikoreksi: urCount > 0 ? false : true, // Jika ada uraian, beri tanda belum dikoreksi
+        dikoreksi: urCount > 0 ? false : true, 
         submittedAt:firebase.firestore.FieldValue.serverTimestamp()
     };
     
-    // Simpan ke DB PAJ
+    localStorage.setItem('PAJ_SUBMIT_DATA', JSON.stringify(rd));
+    submitToServer(rd, urCount);
+}
+
+function submitToServer(rd, urCount){
+    document.getElementById('examView').classList.add('hidden');
+    document.getElementById('syncOverlay').style.display='flex';
+
     dbPAJ.collection('exam_results').add(rd).then(function(){
-        document.getElementById('examView').classList.add('hidden');
+        localStorage.removeItem('PAJ_SUBMIT_DATA'); 
+        localStorage.removeItem(examIdKey); 
+        
+        document.getElementById('syncOverlay').style.display='none';
         document.getElementById('resView').style.display='flex';
-        document.getElementById('resScore').innerText=nilaiAkhir;
+        document.getElementById('resScore').innerText = rd.nilaiAkhir;
         document.getElementById('resSub').innerText = urCount > 0 ? "Nilai Sementara (PG 70%, Uraian menunggu Guru)" : "Nilai Akhir PG";
+        document.getElementById('resSub').style.color = "#7a8ba5";
     }).catch(function(e){
-        alert('Gagal mengirim jawaban ke server!\nPastikan koneksi stabil dan coba tekat tombol SELESAI lagi.\nError: '+e.message);
-        active=true; // Biarkan coba lagi
+        document.getElementById('syncOverlay').style.display='none';
+        alert('Koneksi internet terputus!\nJawabanmu sudah tersimpan aman di perangkat.\nJANGAN HAPUS APLIKASI/CHROME.\nHarap buka kembali halaman ini saat ada sinyal internet untuk mengirim jawaban.');
+        
+        document.getElementById('resView').style.display='flex';
+        document.getElementById('resScore').innerText = rd.nilaiAkhir;
+        document.getElementById('resSub').innerText = "OFFLINE - Jawaban belum terkirim. Buka halaman ini lagi saat ada internet!";
+        document.getElementById('resSub').style.color = "#ef4444";
     });
+}
+
+window.addEventListener('online', function() {
+    var pendingSubmit = localStorage.getItem('PAJ_SUBMIT_DATA');
+    if(pendingSubmit && !active){ 
+        document.getElementById('syncOverlay').style.display='flex';
+        var rd = JSON.parse(pendingSubmit);
+        dbPAJ.collection('exam_results').add(rd).then(function(){
+            localStorage.removeItem('PAJ_SUBMIT_DATA');
+            localStorage.removeItem(examIdKey);
+            location.reload(); 
+        });
+    }
+});
+
+function exitApp(){
+    localStorage.removeItem(examIdKey);
+    location.reload();
 }
 </script>
 </body>
