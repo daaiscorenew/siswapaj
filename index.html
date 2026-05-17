@@ -24,7 +24,6 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(239,68,68,.3)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(1);transform:none;box-shadow:none}
 
-/* === LAYOUT UJIAN MIRIP KODE 1 === */
 .exam-shell{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;position:relative;overflow:hidden}
 
 .exam-hdr{background:linear-gradient(135deg,#1a2744 0%,#1e2d4a 100%);border-bottom:1px solid #2a3f5f;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:20;gap:8px;min-height:52px}
@@ -222,19 +221,45 @@ try {
     dbPAJ = appPAJ.firestore();
 } catch(e) { console.error("Firebase Init Error:", e); }
 
-var stu=null, exam=null, qList=[], ans={}, qIdx=0, timerInt=null, warnCnt=0, active=false, examIdKey='PAJ_EXAM_DATA';
+var stu=null, exam=null, qList=[], ans={}, qIdx=0, timerInt=null, warnCnt=0, active=false, examIdKey='PAJ_EXAM_DATA', isSubmitting=false;
 var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matematika'},{id:'bin',nama:'Bahasa Indonesia'},{id:'sbd',nama:'Seni Budaya'},{id:'ipas',nama:'IPAS'},{id:'bsd',nama:'Bahasa Sunda'},{id:'bing',nama:'Bahasa Inggris'},{id:'pai',nama:'PAI'},{id:'pjok',nama:'PJOK'}];
 
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
-function esc(s){if(!s)return'';return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c]})}
+
+// PERBAIKAN UTAMA: Fungsi Sanitize HTML menggantikan esc()
+// Fungsi ini mengizinkan tag <b>, <i>, <u>, <sub>, <sup> agar format teks soal rapi, tapi memblokir <script> dan atribut berbahaya (misal: onclick, onerror)
+function sanitizeHtml(unsafe) {
+    if (!unsafe) return '';
+    unsafe = String(unsafe);
+    // 1. Hapus atribut berbahaya (onclick, onerror, dll)
+    unsafe = unsafe.replace(/on\w+="[^"]*"/gi, '');
+    unsafe = unsafe.replace(/on\w+='[^']*'/gi, '');
+    // 2. Hapus tag berbahaya (script, iframe, svg, dll)
+    unsafe = unsafe.replace(/<(\/?)(script|iframe|object|embed|link|style|svg|math|meta|base)[^>]*>/gi, '');
+    // 3. Ubah tanda kutip menjadi entitas HTML agar tidak merusak atribut onclick di tombol
+    unsafe = unsafe.replace(/"/g, '&quot;');
+    unsafe = unsafe.replace(/'/g, '&#039;');
+    return unsafe;
+}
+
 function showLoginError(msg){var el=document.getElementById('loginError');el.textContent=msg;el.classList.remove('hidden');var btn=document.getElementById('btnMasuk');btn.disabled=false;btn.innerHTML='MASUK UJIAN';}
+
+function simpleHash(str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+        var char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString(36);
+}
 
 window.onload = function() {
     document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, false);
     document.addEventListener('copy', function(e){ e.preventDefault(); }, false);
     document.addEventListener('cut', function(e){ e.preventDefault(); }, false);
     document.addEventListener('paste', function(e){ e.preventDefault(); }, false);
-    document.addEventListener('selectstart', function(e){ if(active) e.preventDefault(); }, false);
+    document.addEventListener('selectstart', function(e){ e.preventDefault(); }, false);
     document.addEventListener('keydown', function(e) {
         if(e.keyCode === 123) e.preventDefault(); 
         if(e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) e.preventDefault(); 
@@ -262,9 +287,26 @@ function checkResumedExam(){
     if(savedExam){
         try {
             var data = JSON.parse(savedExam);
-            stu = data.stu; exam = data.exam; qList = data.qList; ans = data.ans; qIdx = data.qIdx;
+            if(data.hash !== simpleHash(JSON.stringify(data.ans) + data.exam.token + data.qIds.join(','))) {
+                localStorage.removeItem(examIdKey);
+                alert("Deteksi pelanggaran! Data ujian direset.");
+                location.reload();
+                return;
+            }
+            stu = data.stu; exam = data.exam; ans = data.ans; qIdx = data.qIdx;
+            
             document.getElementById('loginView').style.display='none';
-            startExam(true); 
+            document.getElementById('loadingScreen').style.display='flex';
+            document.getElementById('loadingText').textContent = "Menyambungkan kembali ujian...";
+            
+            dbPAJ.collection('questions_paj').where('mapel','==',exam.mapel).where('kecamatanId','==',exam.kecamatanId).get().then(function(s){
+                if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
+                var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
+                list.sort(function(a,b){ return a.id.localeCompare(b.id); }); 
+                qList = list.filter(function(q){ return data.qIds.indexOf(q.id) !== -1; });
+                qList.sort(function(a,b){ return data.qIds.indexOf(a.id) - data.qIds.indexOf(b.id); });
+                startExam(true); 
+            });
         } catch(e) {
             localStorage.removeItem(examIdKey);
         }
@@ -272,7 +314,9 @@ function checkResumedExam(){
 }
 
 function saveStateLocally(){
-    var state = { stu: stu, exam: exam, qList: qList, ans: ans, qIdx: qIdx };
+    var qIds = qList.map(function(q){return q.id});
+    var state = { stu: stu, exam: exam, ans: ans, qIdx: qIdx, qIds: qIds };
+    state.hash = simpleHash(JSON.stringify(ans) + exam.token + qIds.join(','));
     localStorage.setItem(examIdKey, JSON.stringify(state));
 }
 
@@ -334,7 +378,11 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        list.sort(function(){return 0.5-Math.random()}); 
+        list.sort(function(a,b){ return a.id.localeCompare(b.id); });
+        for (let i = list.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [list[i], list[j]] = [list[j], list[i]];
+        }
         list.sort(function(a,b){return(a.type==='pg'?-1:1)}); 
         
         qList = list;
@@ -390,7 +438,6 @@ function renderQ(idx){
     
     var area=document.getElementById('qArea');
     
-    // Struktur tampilan disamakan dengan Kode 1
     var isPg = q.type==='pg';
     var bCls=isPg?'bg-kopAccent/10 text-kopAccent border border-kopAccent/20':'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20';
     var bIco=isPg?'fa-list-ul':'fa-pen-fancy';
@@ -405,7 +452,9 @@ function renderQ(idx){
     h+='<div class="flex items-start gap-2.5 mb-5">';
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
-    h+='<p class="text-[15px] leading-relaxed text-light font-medium">'+esc(q.text)+'</p>';
+    
+    // PERBAIKAN: Gunakan sanitizeHtml() bukan esc()
+    h+='<p class="text-[15px] leading-relaxed text-light font-medium">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
     
@@ -426,7 +475,7 @@ function renderQ(idx){
         }
 
         opts.forEach(function(opt,oi){
-            if(oi >= 4) return; // Batas opsi A-D
+            if(oi >= 4) return; 
             var optImgUrl = optImgs && optImgs[oi] ? optImgs[oi] : '';
             var optText = (opt === null || opt === undefined) ? '' : String(opt);
             
@@ -437,7 +486,8 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    h+='<div class="text-sm leading-relaxed">'+esc(optText)+'</div>';
+                    // PERBAIKAN: Gunakan sanitizeHtml() bukan esc()
+                    h+='<div class="text-sm leading-relaxed">'+sanitizeHtml(optText)+'</div>';
                 }
                 
                 if(optImgUrl !== '') {
@@ -451,7 +501,7 @@ function renderQ(idx){
     }else{
         var cv=ans[q.id]||'';
         h+='<div class="mt-3">';
-        h+='<textarea id="es-'+q.id+'" class="essay-box" placeholder="Tulis jawaban uraian di sini..." oninput="saveEs(\''+q.id+'\')">'+esc(cv)+'</textarea>';
+        h+='<textarea id="es-'+q.id+'" class="essay-box" placeholder="Tulis jawaban uraian di sini..." oninput="saveEs(\''+q.id+'\')">'+escForTextarea(cv)+'</textarea>';
         h+='<div class="flex justify-between items-center mt-1.5">';
         h+='<div class="text-[10px] text-muted"><i class="fas fa-pencil-alt mr-1 text-kopAccent/40"></i>Dikoreksi manual oleh Guru</div>';
         h+='<div class="text-[10px] text-muted font-mono"><span id="cc-'+q.id+'">'+cv.length+'</span> karakter</div>';
@@ -462,7 +512,6 @@ function renderQ(idx){
     area.innerHTML=h;
     updProg(); area.scrollTop = 0;
 
-    // Nav bawah mengikuti logika Kode 1
     var bP=document.getElementById('bPrev'),bN=document.getElementById('bNext');
     bP.disabled=idx===0;
     if(idx<qList.length-1){
@@ -470,6 +519,12 @@ function renderQ(idx){
     }else{
         bN.className='b-nav-btn red';bN.innerHTML='<i class="fas fa-check-circle mr-1"></i>Selesai';bN.onclick=function(){confirmSubmit()};
     }
+}
+
+// Fungsi khusus Textarea (tetap escape semua HTML agar aman dari injection saat ditulis ulang ke DOM)
+function escForTextarea(s) {
+    if(!s) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 function pickOpt(qId,val){ans[qId]=val; saveStateLocally(); renderQ(qIdx)}
@@ -501,6 +556,9 @@ function confirmSubmit(){
 }
 
 function doSubmit(forced){
+    if(isSubmitting) return;
+    isSubmitting = true;
+    
     active=false;clearInterval(timerInt);
     
     var totalPgScore=0, maxPgScore=0, pgCorrect=0, pgSalah=0, pgKosong=0, urCount=0;
@@ -554,6 +612,7 @@ function submitToServer(rd, urCount, benar, salah, kosong){
         document.getElementById('syncOverlay').style.display='none';
         showResultScreen(rd, benar, salah, kosong, urCount, true);
     }).catch(function(e){
+        isSubmitting = false; 
         document.getElementById('syncOverlay').style.display='none';
         showResultScreen(rd, benar, salah, kosong, urCount, false);
     });
