@@ -592,7 +592,7 @@ function doSubmit(forced){
         essayScore:nilaiUraian, uraianScore:nilaiUraian, scoreUraian:nilaiUraian, nilaiUraian:nilaiUraian,
         score:nilaiAkhir, finalScore:nilaiAkhir, nilaiAkhir:nilaiAkhir, totalScore:nilaiAkhir,
         dikoreksi: urCount > 0 ? false : true, 
-        submittedAt:firebase.firestore.FieldValue.serverTimestamp()
+        submittedAt: new Date().toISOString() // Gunakan waktu lokal agar tidak error saat offline
     };
     
     localStorage.setItem('PAJ_SUBMIT_DATA', JSON.stringify(rd));
