@@ -62,12 +62,13 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .opt-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1.5px solid #2a3f5f;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:6px;background:rgba(15,25,35,.5);-webkit-tap-highlight-color:transparent}
 .opt-row:active{transform:scale(.98)}
 .opt-row.picked{border-color:#c9a84c;background:rgba(201,168,76,.07);box-shadow:inset 0 0 0 1px rgba(201,168,76,.1)}
-.opt-ltr{width:28px;height:28px;min-width:28px;border-radius:7px;background:#182538;border:1.5px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#7a8ba5;transition:all .15s}
+.opt-ltr{width:28px;height:28px;min-width:28px;border-radius:7px;background:#182538;border:1.5px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#FFFFFF;transition:all .15s}
 .opt-row.picked .opt-ltr{background:#c9a84c;border-color:#c9a84c;color:#1a2744}
 .opt-content{flex:1;word-break:break-word;min-width:0}
 
-.essay-box{width:100%;min-height:160px;background:rgba(15,25,35,.5);border:1.5px solid #2a3f5f;color:#e8ecf1;padding:12px;border-radius:10px;font-family:inherit;font-size:15px;resize:none;line-height:1.7;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.essay-box{width:100%;min-height:160px;background:rgba(15,25,35,.5);border:1.5px solid #2a3f5f;color:#FFFFFF;padding:12px;border-radius:10px;font-family:inherit;font-size:15px;resize:none;line-height:1.7;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .essay-box:focus{outline:none;border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.essay-box::placeholder{color: #5a7192;}
 
 .bot-nav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(15,25,35,.92) 0%,rgba(15,25,35,.98) 100%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #2a3f5f;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:30}
 .b-nav-btn{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1.5px solid #2a3f5f;background:#182538;color:#e8ecf1;cursor:pointer;font-size:13px;font-weight:600;transition:all .12s;-webkit-tap-highlight-color:transparent;flex:1;justify-content:center}
@@ -97,14 +98,11 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* PERBAIKAN EKSTREM: Memaksa TEKS ARAB & SEGALA JENIS TEKS berwarna putih dan rapi */
-.q-text-fix, .q-text-fix * {
-    color: #e8ecf1 !important;
-    font-family: 'Source Sans 3', sans-serif !important; /* Paksa font agar rapi di web */
-    direction: rtl; /* Arah tulisan Arab dari kanan ke kiri */
-    text-align: right; /* Tulisan Arab rata kanan */
-    font-size: 1.2rem !important; /* Sedikit diperbesar agar jelas */
-    line-height: 2 !important; /* Jarak antar baris Arab diperlebar */
+/* TEKS CERAH & KELIHATAN */
+.q-text, .q-text b, .q-text i, .q-text u, .q-text strong, .q-text em,
+.opt-text, .opt-text b, .opt-text i, .opt-text u, .opt-text strong, .opt-text em {
+    color: #FFFFFF !important; 
+    text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.4); 
 }
 
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
@@ -236,19 +234,14 @@ var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matemati
 
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
 
-// PERBAIKAN SANITASI EKSTREM: Hapus total style bawaan dari Bank Soal (Word/Docs)
 function sanitizeHtml(unsafe) {
     if (!unsafe) return '';
     unsafe = String(unsafe);
-    // Hapus semua style inline yang menyebabkan warna dan font aneh
-    unsafe = unsafe.replace(/style="[^"]*"/gi, '');
-    unsafe = unsafe.replace(/style='[^']*'/gi, '');
-    // Hapus tag font pembuka dan penutup
-    unsafe = unsafe.replace(/<\/?font[^>]*>/gi, '');
-    // Hapus script dan bahaya
     unsafe = unsafe.replace(/on\w+="[^"]*"/gi, '');
     unsafe = unsafe.replace(/on\w+='[^']*'/gi, '');
     unsafe = unsafe.replace(/<(\/?)(script|iframe|object|embed|link|style|svg|math|meta|base)[^>]*>/gi, '');
+    unsafe = unsafe.replace(/"/g, '&quot;');
+    unsafe = unsafe.replace(/'/g, '&#039;');
     return unsafe;
 }
 
@@ -263,6 +256,32 @@ function simpleHash(str) {
     }
     return hash.toString(36);
 }
+
+/* ============================================================ */
+/* FUNGSI PENGURUTAN SOAL: PG DI AWAL, URAIAN DI AKHIR          */
+/* ============================================================ */
+function sortQuestionsByType(list) {
+    var pg = [];
+    var ur = [];
+    
+    // 1. Pisahkan berdasarkan tipe
+    list.forEach(function(q) {
+        if (q.type === 'pg' || !q.type) { // Jika kosong, anggap PG
+            pg.push(q);
+        } else {
+            ur.push(q);
+        }
+    });
+    
+    // 2. Urutkan masing-masing tipe berdasarkan ID Dokumen dari Firebase
+    // Ini memastikan urutan soal sesuai dengan urutan di Bank Soal
+    pg.sort(function(a, b) { return a.id.localeCompare(b.id); });
+    ur.sort(function(a, b) { return a.id.localeCompare(b.id); });
+    
+    // 3. Gabungkan (PG di awal, Uraian di akhir)
+    return pg.concat(ur);
+}
+/* ============================================================ */
 
 window.onload = function() {
     document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, false);
@@ -292,44 +311,7 @@ function setupSecurity(){
 
 function resumeExam(){document.getElementById('warnScreen').style.display='none'}
 
-function sortQuestions(list) {
-    list.sort(function(a, b) {
-        var isAPg = (a.type === 'pg' || a.type === 'urutan');
-        var isBPg = (b.type === 'pg' || b.type === 'urutan');
-        
-        if (isAPg && !isBPg) return -1; 
-        if (!isAPg && isBPg) return 1;  
-        
-        var urutanA = a.nomor || a.urutan || a.no || parseInt(a.id) || 0;
-        var urutanB = b.nomor || b.urutan || b.no || parseInt(b.id) || 0;
-        return urutanA - urutanB;
-    });
-    return list;
-}
-
 function checkResumedExam(){
-    var pendingSubmit = localStorage.getItem('PAJ_SUBMIT_DATA');
-    if(pendingSubmit){
-        try {
-            var rd = JSON.parse(pendingSubmit);
-            document.getElementById('loginView').style.display='none';
-            document.getElementById('syncOverlay').style.display='flex';
-            
-            dbPAJ.collection('exam_results').add(rd).then(function(){
-                localStorage.removeItem('PAJ_SUBMIT_DATA');
-                localStorage.removeItem(examIdKey);
-                alert('Jawaban berhasil dikirim ke server!');
-                location.reload();
-            }).catch(function(e){
-                alert('Gagal mengirim. Pastikan ada koneksi internet lalu buka halaman ini lagi.');
-                location.reload();
-            });
-            return; 
-        } catch(e) {
-            localStorage.removeItem('PAJ_SUBMIT_DATA');
-        }
-    }
-
     var savedExam = localStorage.getItem(examIdKey);
     if(savedExam){
         try {
@@ -350,7 +332,9 @@ function checkResumedExam(){
                 if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
                 var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
                 
-                qList = sortQuestions(list); 
+                // Terapkan pengurutan PG di awal, Uraian di akhir
+                qList = sortQuestionsByType(list);
+                
                 startExam(true); 
             });
         } catch(e) {
@@ -424,7 +408,9 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        qList = sortQuestions(list); 
+        // Terapkan pengurutan PG di awal, Uraian di akhir
+        qList = sortQuestionsByType(list);
+        
         saveStateLocally(); 
         startExam(false);
     }).catch(function(e){
@@ -477,7 +463,7 @@ function renderQ(idx){
     
     var area=document.getElementById('qArea');
     
-    var isPg = (q.type==='pg' || q.type==='urutan');
+    var isPg = q.type==='pg';
     var bCls=isPg?'bg-kopAccent/10 text-kopAccent border border-kopAccent/20':'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20';
     var bIco=isPg?'fa-list-ul':'fa-pen-fancy';
     var bTxt=isPg?'Pilihan Ganda':'Uraian';
@@ -492,8 +478,7 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    // Tambah q-text-fix
-    h+='<p class="text-[15px] leading-relaxed font-medium text-light q-text-fix">'+sanitizeHtml(q.text)+'</p>';
+    h+='<p class="q-text text-[15px] leading-relaxed font-medium">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
     
@@ -525,7 +510,7 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    h+='<div class="text-sm leading-relaxed text-light q-text-fix">'+sanitizeHtml(optText)+'</div>';
+                    h+='<div class="opt-text text-sm leading-relaxed">'+sanitizeHtml(optText)+'</div>';
                 }
                 
                 if(optImgUrl !== '') {
@@ -601,7 +586,7 @@ function doSubmit(forced){
     var totalPgScore=0, maxPgScore=0, pgCorrect=0, pgSalah=0, pgKosong=0, urCount=0;
     
     qList.forEach(function(q){
-        if(q.type==='pg' || q.type==='urutan'){
+        if(q.type==='pg'){
             var qScore = q.score || 1;
             maxPgScore += qScore;
             var k=(q.correctKey||q.answer||'').toUpperCase().trim();
