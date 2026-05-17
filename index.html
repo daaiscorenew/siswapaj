@@ -97,6 +97,14 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
+/* PERBAIKAN KHUSUS: Memaksa teks Arab (PAI) dan Aksara Sunda berwarna putih dan lebih besar */
+.text-light, .q-text-fix {
+    color: #e8ecf1 !important;
+}
+q-text-fix span, .text-light span, .text-light div, .text-light p, .text-light b, .text-light strong, .text-light font {
+    color: inherit !important;
+}
+
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
 </style>
 </head>
@@ -226,12 +234,19 @@ var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matemati
 
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
 
+// PERBAIKAN: Bersihkan tag style dan font berwarna hitam dari Bank Soal
 function sanitizeHtml(unsafe) {
     if (!unsafe) return '';
     unsafe = String(unsafe);
     unsafe = unsafe.replace(/on\w+="[^"]*"/gi, '');
     unsafe = unsafe.replace(/on\w+='[^']*'/gi, '');
     unsafe = unsafe.replace(/<(\/?)(script|iframe|object|embed|link|style|svg|math|meta|base)[^>]*>/gi, '');
+    // Hapus style inline yang memaksa warna hitam
+    unsafe = unsafe.replace(/style="[^"]*color:\s*black[^"]*"/gi, '');
+    unsafe = unsafe.replace(/style="[^"]*color:\s*#000000[^"]*"/gi, '');
+    unsafe = unsafe.replace(/style="[^"]*color:\s*#000[^"]*"/gi, '');
+    // Hapus tag font yang membawa warna
+    unsafe = unsafe.replace(/<font[^>]*color=["'](black|#000000|#000)["'][^>]*>/gi, '<font>');
     return unsafe;
 }
 
@@ -275,17 +290,14 @@ function setupSecurity(){
 
 function resumeExam(){document.getElementById('warnScreen').style.display='none'}
 
-// PERBAIKAN URUTAN: PG WAJIB DI DEPAN, URAIAN DI BELAKANG
 function sortQuestions(list) {
     list.sort(function(a, b) {
-        // Jika tipe soal berbeda, PG (atau urutan/menjodohkan) selalu di atas, Uraian di bawah
         var isAPg = (a.type === 'pg' || a.type === 'urutan');
         var isBPg = (b.type === 'pg' || b.type === 'urutan');
         
-        if (isAPg && !isBPg) return -1; // A PG, B Uraian -> A duluan
-        if (!isAPg && isBPg) return 1;  // A Uraian, B PG -> B duluan
+        if (isAPg && !isBPg) return -1; 
+        if (!isAPg && isBPg) return 1;  
         
-        // Jika tipe soal sama, urutkan berdasarkan nomor soal di database
         var urutanA = a.nomor || a.urutan || a.no || parseInt(a.id) || 0;
         var urutanB = b.nomor || b.urutan || b.no || parseInt(b.id) || 0;
         return urutanA - urutanB;
@@ -478,7 +490,8 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    h+='<p class="text-[15px] leading-relaxed font-medium text-light">'+sanitizeHtml(q.text)+'</p>';
+    // PERBAIKAN: Tambah class q-text-fix agar huruf Arab dan Sunda yang dibawa font default jadi putih
+    h+='<p class="text-[15px] leading-relaxed font-medium text-light q-text-fix">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
     
@@ -510,7 +523,7 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    h+='<div class="text-sm leading-relaxed text-light">'+sanitizeHtml(optText)+'</div>';
+                    h+='<div class="text-sm leading-relaxed text-light q-text-fix">'+sanitizeHtml(optText)+'</div>';
                 }
                 
                 if(optImgUrl !== '') {
