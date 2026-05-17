@@ -97,12 +97,14 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* PERBAIKAN KHUSUS: Memaksa teks Arab (PAI) dan Aksara Sunda berwarna putih dan lebih besar */
-.text-light, .q-text-fix {
+/* PERBAIKAN EKSTREM: Memaksa TEKS ARAB & SEGALA JENIS TEKS berwarna putih dan rapi */
+.q-text-fix, .q-text-fix * {
     color: #e8ecf1 !important;
-}
-q-text-fix span, .text-light span, .text-light div, .text-light p, .text-light b, .text-light strong, .text-light font {
-    color: inherit !important;
+    font-family: 'Source Sans 3', sans-serif !important; /* Paksa font agar rapi di web */
+    direction: rtl; /* Arah tulisan Arab dari kanan ke kiri */
+    text-align: right; /* Tulisan Arab rata kanan */
+    font-size: 1.2rem !important; /* Sedikit diperbesar agar jelas */
+    line-height: 2 !important; /* Jarak antar baris Arab diperlebar */
 }
 
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
@@ -234,19 +236,19 @@ var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matemati
 
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
 
-// PERBAIKAN: Bersihkan tag style dan font berwarna hitam dari Bank Soal
+// PERBAIKAN SANITASI EKSTREM: Hapus total style bawaan dari Bank Soal (Word/Docs)
 function sanitizeHtml(unsafe) {
     if (!unsafe) return '';
     unsafe = String(unsafe);
+    // Hapus semua style inline yang menyebabkan warna dan font aneh
+    unsafe = unsafe.replace(/style="[^"]*"/gi, '');
+    unsafe = unsafe.replace(/style='[^']*'/gi, '');
+    // Hapus tag font pembuka dan penutup
+    unsafe = unsafe.replace(/<\/?font[^>]*>/gi, '');
+    // Hapus script dan bahaya
     unsafe = unsafe.replace(/on\w+="[^"]*"/gi, '');
     unsafe = unsafe.replace(/on\w+='[^']*'/gi, '');
     unsafe = unsafe.replace(/<(\/?)(script|iframe|object|embed|link|style|svg|math|meta|base)[^>]*>/gi, '');
-    // Hapus style inline yang memaksa warna hitam
-    unsafe = unsafe.replace(/style="[^"]*color:\s*black[^"]*"/gi, '');
-    unsafe = unsafe.replace(/style="[^"]*color:\s*#000000[^"]*"/gi, '');
-    unsafe = unsafe.replace(/style="[^"]*color:\s*#000[^"]*"/gi, '');
-    // Hapus tag font yang membawa warna
-    unsafe = unsafe.replace(/<font[^>]*color=["'](black|#000000|#000)["'][^>]*>/gi, '<font>');
     return unsafe;
 }
 
@@ -490,7 +492,7 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    // PERBAIKAN: Tambah class q-text-fix agar huruf Arab dan Sunda yang dibawa font default jadi putih
+    // Tambah q-text-fix
     h+='<p class="text-[15px] leading-relaxed font-medium text-light q-text-fix">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
