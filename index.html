@@ -283,7 +283,41 @@ function setupSecurity(){
 
 function resumeExam(){document.getElementById('warnScreen').style.display='none'}
 
+function sortQuestions(list) {
+    // Mengurutkan soal berdasarkan field nomor/urutan/no jika ada, jika tidak pakai ID dokumen yang diubah jadi angka
+    list.sort(function(a, b) {
+        var urutanA = a.nomor || a.urutan || a.no || parseInt(a.id) || 0;
+        var urutanB = b.nomor || b.urutan || b.no || parseInt(b.id) || 0;
+        return urutanA - urutanB;
+    });
+    return list;
+}
+
 function checkResumedExam(){
+    // 1. Cek dulu apakah ada jawaban yang sudah di-submit tapi gagal kirim (offline)
+    var pendingSubmit = localStorage.getItem('PAJ_SUBMIT_DATA');
+    if(pendingSubmit){
+        try {
+            var rd = JSON.parse(pendingSubmit);
+            document.getElementById('loginView').style.display='none';
+            document.getElementById('syncOverlay').style.display='flex';
+            
+            dbPAJ.collection('exam_results').add(rd).then(function(){
+                localStorage.removeItem('PAJ_SUBMIT_DATA');
+                localStorage.removeItem(examIdKey);
+                alert('Jawaban berhasil dikirim ke server!');
+                location.reload();
+            }).catch(function(e){
+                alert('Gagal mengirim. Pastikan ada koneksi internet lalu buka halaman ini lagi.');
+                location.reload();
+            });
+            return; // Hentikan proses login sampai data ini terkirim
+        } catch(e) {
+            localStorage.removeItem('PAJ_SUBMIT_DATA');
+        }
+    }
+
+    // 2. Lanjut cek sesi ujian yang belum selesai
     var savedExam = localStorage.getItem(examIdKey);
     if(savedExam){
         try {
@@ -304,10 +338,7 @@ function checkResumedExam(){
                 if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
                 var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
                 
-                // PERBAIKAN 1: Soal TIDAK diacak, diurutkan sesuai ID di bank soal
-                list.sort(function(a,b){ return a.id.localeCompare(b.id); }); 
-                
-                qList = list;
+                qList = sortQuestions(list); // Menggunakan fungsi sort baru
                 startExam(true); 
             });
         } catch(e) {
@@ -381,10 +412,7 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        // PERBAIKAN 1: Soal TIDAK diacak, diurutkan berdasarkan ID dokumen (sesuai bank soal)
-        list.sort(function(a,b){ return a.id.localeCompare(b.id); });
-        
-        qList = list;
+        qList = sortQuestions(list); // Menggunakan fungsi sort baru
         saveStateLocally(); 
         startExam(false);
     }).catch(function(e){
@@ -452,7 +480,6 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    // PERBAIKAN 2: Menambahkan class q-text agar CSS memaksa warna putih
     h+='<p class="q-text text-[15px] leading-relaxed font-medium">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
@@ -485,7 +512,6 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    // PERBAIKAN 2: Menambahkan class opt-text agar CSS memaksa warna putih
                     h+='<div class="opt-text text-sm leading-relaxed">'+sanitizeHtml(optText)+'</div>';
                 }
                 
