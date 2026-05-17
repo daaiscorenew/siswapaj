@@ -56,39 +56,8 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .q-card{background:linear-gradient(160deg,#182538 0%,#1a2840 100%);border:1px solid #2a3f5f;border-radius:14px;padding:20px 16px;max-width:600px;margin:0 auto;width:100%;position:relative;z-index:1;box-shadow:0 6px 24px rgba(0,0,0,.18)}
 .q-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#c9a84c,#b8943f);color:#1a2744;font-weight:800;font-size:14px;font-family:'Playfair Display',serif;flex-shrink:0;box-shadow:0 2px 8px rgba(201,168,76,.25)}
 
-/* PERBAIKAN GAMBAR SOAL: Lebar penuh, background putih solid, padding agar tidak menepi, border tebal */
-.q-img{
-    display:block;
-    max-width:100%;
-    width:100%;
-    max-height:300px;
-    height:auto;
-    margin:12px auto 4px;
-    border-radius:8px;
-    object-fit:contain;
-    background:#ffffff; 
-    padding:8px;
-    cursor:pointer;
-    box-shadow:0 4px 15px rgba(0,0,0,.4);
-    border:2px solid #e2e8f0;
-}
-
-/* PERBAIKAN GAMBAR OPSI: Background putih solid, padding, border tebal */
-.opt-img{
-    display:block;
-    max-width:180px;
-    max-height:110px;
-    width:100%;
-    height:auto;
-    margin-top:8px;
-    border-radius:6px;
-    object-fit:contain;
-    background:#ffffff;
-    padding:6px;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(0,0,0,.3);
-    border:2px solid #e2e8f0;
-}
+.q-img{display:block;max-width:100%;max-height:220px;width:auto;height:auto;margin:10px auto 4px;border-radius:8px;object-fit:contain;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2);border:1px solid #2a3f5f}
+.opt-img{display:block;max-width:150px;max-height:90px;width:auto;height:auto;margin-top:6px;border-radius:6px;object-fit:contain;background:#fff;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.1);border:1px solid #2a3f5f}
 
 .opt-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1.5px solid #2a3f5f;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:6px;background:rgba(15,25,35,.5);-webkit-tap-highlight-color:transparent}
 .opt-row:active{transform:scale(.98)}
@@ -96,18 +65,6 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .opt-ltr{width:28px;height:28px;min-width:28px;border-radius:7px;background:#182538;border:1.5px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#7a8ba5;transition:all .15s}
 .opt-row.picked .opt-ltr{background:#c9a84c;border-color:#c9a84c;color:#1a2744}
 .opt-content{flex:1;word-break:break-word;min-width:0}
-
-/* PERBAIKAN TEKS: Paksa warna putih untuk semua teks di dalam soal dan opsi */
-.q-text, .opt-text {
-    color: #ffffff !important;
-    font-size: 15px;
-    line-height: 1.6;
-    font-weight: 500;
-}
-.q-text b, .q-text i, .q-text u, .q-text sub, .q-text sup,
-.opt-text b, .opt-text i, .opt-text u, .opt-text sub, .opt-text sup {
-    color: #ffffff !important;
-}
 
 .essay-box{width:100%;min-height:160px;background:rgba(15,25,35,.5);border:1.5px solid #2a3f5f;color:#e8ecf1;padding:12px;border-radius:10px;font-family:inherit;font-size:15px;resize:none;line-height:1.7;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .essay-box:focus{outline:none;border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.1)}
@@ -133,12 +90,18 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .loading-overlay{position:fixed;inset:0;background:rgba(15,25,35,.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;color:white}
 .sync-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;display:none;align-items:center;justify-content:center;flex-direction:column;color:white;text-align:center;padding:20px}
 
-.zoom-overlay{position:fixed;inset:0;background:rgba(0,0,0,.98);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;cursor:pointer}
-.zoom-overlay img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;background:#fff;padding:10px;}
+.zoom-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;cursor:pointer}
+.zoom-overlay img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* PERBAIKAN WARNA: Memaksa semua teks di dalam soal dan opsi berwarna putih */
+.q-text, .q-text b, .q-text i, .q-text u, .q-text strong, .q-text em,
+.opt-text, .opt-text b, .opt-text i, .opt-text u, .opt-text strong, .opt-text em {
+    color: #e8ecf1 !important;
+}
 
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
 </style>
@@ -269,16 +232,12 @@ var MAPEL_LIST=[{id:'ppkn',nama:'Pendidikan Pancasila'},{id:'mat',nama:'Matemati
 
 function getMapelName(id){var m=MAPEL_LIST.find(function(x){return x.id===id});return m?m.nama:id}
 
-// Fungsi Sanitize HTML
 function sanitizeHtml(unsafe) {
     if (!unsafe) return '';
     unsafe = String(unsafe);
-    // Hapus atribut berbahaya (onclick, onerror, dll)
     unsafe = unsafe.replace(/on\w+="[^"]*"/gi, '');
     unsafe = unsafe.replace(/on\w+='[^']*'/gi, '');
-    // Hapus tag berbahaya
     unsafe = unsafe.replace(/<(\/?)(script|iframe|object|embed|link|style|svg|math|meta|base)[^>]*>/gi, '');
-    // Ubah tanda kutip menjadi entitas HTML agar tidak merusak atribut di DOM
     unsafe = unsafe.replace(/"/g, '&quot;');
     unsafe = unsafe.replace(/'/g, '&#039;');
     return unsafe;
@@ -344,9 +303,11 @@ function checkResumedExam(){
             dbPAJ.collection('questions_paj').where('mapel','==',exam.mapel).where('kecamatanId','==',exam.kecamatanId).get().then(function(s){
                 if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
                 var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
+                
+                // PERBAIKAN 1: Soal TIDAK diacak, diurutkan sesuai ID di bank soal
                 list.sort(function(a,b){ return a.id.localeCompare(b.id); }); 
-                qList = list.filter(function(q){ return data.qIds.indexOf(q.id) !== -1; });
-                qList.sort(function(a,b){ return data.qIds.indexOf(a.id) - data.qIds.indexOf(b.id); });
+                
+                qList = list;
                 startExam(true); 
             });
         } catch(e) {
@@ -420,12 +381,8 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
+        // PERBAIKAN 1: Soal TIDAK diacak, diurutkan berdasarkan ID dokumen (sesuai bank soal)
         list.sort(function(a,b){ return a.id.localeCompare(b.id); });
-        for (let i = list.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [list[i], list[j]] = [list[j], list[i]];
-        }
-        list.sort(function(a,b){return(a.type==='pg'?-1:1)}); 
         
         qList = list;
         saveStateLocally(); 
@@ -495,8 +452,8 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    // PERBAIKAN: Gunakan class q-text agar paksa warna putih
-    h+='<p class="q-text">'+sanitizeHtml(q.text)+'</p>';
+    // PERBAIKAN 2: Menambahkan class q-text agar CSS memaksa warna putih
+    h+='<p class="q-text text-[15px] leading-relaxed font-medium">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
     
@@ -528,8 +485,8 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    // PERBAIKAN: Gunakan class opt-text agar paksa warna putih
-                    h+='<div class="opt-text">'+sanitizeHtml(optText)+'</div>';
+                    // PERBAIKAN 2: Menambahkan class opt-text agar CSS memaksa warna putih
+                    h+='<div class="opt-text text-sm leading-relaxed">'+sanitizeHtml(optText)+'</div>';
                 }
                 
                 if(optImgUrl !== '') {
@@ -563,7 +520,6 @@ function renderQ(idx){
     }
 }
 
-// Fungsi khusus Textarea (tetap escape semua HTML agar aman dari injection saat ditulis ulang ke DOM)
 function escForTextarea(s) {
     if(!s) return '';
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
